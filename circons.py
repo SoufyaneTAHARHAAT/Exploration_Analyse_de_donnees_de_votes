@@ -2,7 +2,7 @@ import json, webbrowser, sys
 from jinja2 import Template
 
 # ce fichier concerne la carte de france
-# quand on clique sur une département, on affiche les ciconscription qui se trouvent dans ce département 
+# quand on clique sur un département, on affiche les ciconscription qui se trouvent dans ce département 
 
 
 def loadDeputes() :
