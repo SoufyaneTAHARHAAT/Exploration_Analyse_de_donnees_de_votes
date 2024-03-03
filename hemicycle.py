@@ -4,6 +4,7 @@ from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
+import subprocess
 
 df = pd.read_csv('https://www.nosdeputes.fr/deputes/enmandat/csv', sep=';').filter(items = ['id', 'nom', 'sexe', 'date_naissance', 'num_deptmt', 'nom_circo', 'groupe_sigle', 'parti_ratt_financier', 'place_en_hemicycle']).dropna(subset=['place_en_hemicycle']) 
 
@@ -32,6 +33,8 @@ app.layout = html.Div([
 def display_click_data(clickData):
     if clickData:
         clicked_id = clickData['points'][0]['customdata']
+        # passer l'id du député en paramètre en executant le script qui affiche les détails du député 
+        subprocess.run(["python", "depute.py", str(clicked_id)])
         return html.Div(f'ID du député : {clicked_id}')
     else:
         return html.Div('Cliquer sur un député')
