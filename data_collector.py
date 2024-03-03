@@ -8,7 +8,7 @@ def fetch_deputies():
     if response.status_code == 200:
         return response.content
     else:
-        print(f"Failed to fetch deputy data. Status code: {response.status_code}")
+        print(f"Échec de récupération des données des députés. Code d'état : {response.status_code}")
         return None
 
 def extract_slugs(xml_content):
@@ -26,7 +26,7 @@ def fetch_deputy_votes(deputy_slug):
         if response.status_code == 200:
             return response.content
         else:
-            print(f"Failed to fetch data for deputy {deputy_slug}. Status code: {response.status_code}")
+            print(f"Échec de récupération des données pour le député {deputy_slug}. Code d'état : {response.status_code}")
             return None
     except Exception as e:
         print(f"{e.__class__.__name__}: {e}")
@@ -37,7 +37,7 @@ def extract_vote_info(xml_content):
     for vote in root.findall('.//vote'):
         scrutin = vote.find('scrutin')
         numero = int(scrutin.find('numero').text)
-        if numero in [1, 2, 3]:
+        if numero in [1, 2, 3, 4, 5]:
             position = vote.find('position').text
             vote_info = {
                 'numero': numero,
@@ -55,14 +55,14 @@ def extract_vote_info(xml_content):
     return votes
 
 
-# Fetch deputies and extract slugs
+# Récupérer les députés et extraire les slugs
 sum_voted = 0
 sum_nonvoted = 0
 sum = 0
 deputies_xml = fetch_deputies()
 if deputies_xml:
     deputy_slugs = extract_slugs(deputies_xml)
-    # Fetch votes for each deputy and extract information
+    # Récupérer les votes de chaque député et extraire les informations
     all_votes = {}
     for deputy_slug in deputy_slugs:
         sum +=1
@@ -71,19 +71,18 @@ if deputies_xml:
             vote_info = extract_vote_info(votes_xml)
             all_votes[deputy_slug] = vote_info
             sum_voted +=1
-            print(f"getting vote of {deputy_slug} number {sum_voted}")
+            print(f"Récupération des votes de {deputy_slug} numéro {sum_voted}")
         else:
             sum_nonvoted += 1
 
-print(f"total: {sum}")
-print(f"total voted : {sum_voted}")
-print(f"total nonvoted : {sum_nonvoted}")
+print(f"total : {sum}")
+print(f"total votés : {sum_voted}")
+print(f"total non votés : {sum_nonvoted}")
 
-# Save the extracted vote information into a CSV file
-# Save the extracted vote information into a CSV file
+# Sauvegarder les informations de vote extraites dans un fichier CSV
 if all_votes:
     with open('deputy_votes_new_last.csv', 'w', newline='') as csvfile:
-        fieldnames = ['deputy_name', 'numero', 'date', 'type', 'sort', 'titre', 'nombre_votants', 'nombre_pours', 'nombre_contres', 'nombre_abstentions', 'position']  # Add 'position' here
+        fieldnames = ['deputy_name', 'numero', 'date', 'type', 'sort', 'titre', 'nombre_votants', 'nombre_pours', 'nombre_contres', 'nombre_abstentions', 'position']  # Ajouter 'position' ici
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
         writer.writeheader()
@@ -92,6 +91,6 @@ if all_votes:
                 writer.writerow({'deputy_name': deputy_slug, 'position': vote['position'], **vote})
 
 
-    print("Data saved to deputy_votes_new_last.csv")
+    print("Données enregistrées dans deputy_votes_new_last.csv")
 else:
-    print("No deputy data available.")
+    print("Aucune donnée de député disponible.")
