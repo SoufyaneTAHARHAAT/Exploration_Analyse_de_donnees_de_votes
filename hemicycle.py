@@ -6,16 +6,10 @@ import pandas as pd
 import numpy as np
 import subprocess
 
-df = pd.read_csv('https://www.nosdeputes.fr/deputes/enmandat/csv', sep=';').filter(items = ['id', 'nom', 'sexe', 'date_naissance', 'num_deptmt', 'nom_circo', 'groupe_sigle', 'parti_ratt_financier', 'place_en_hemicycle']).dropna(subset=['place_en_hemicycle']) 
+df = pd.read_csv('nosdeputes_cood.csv', sep=',')
 
-def calculate_coordinates(seat, max_seat):
-    segment_size = max_seat / 12
-    segment = int((seat - 1) // segment_size)
-    angle = (seat - segment * segment_size - 1) * np.pi / (segment_size - 1)
-    radius = 12 - segment
-    x = np.cos(angle) * radius
-    y = np.sin(angle) * radius
-    return x, y
+df_votes = pd.read_csv('deputy_votes_new_last.csv', encoding='ISO-8859-1')
+
 
 
 app = dash.Dash(__name__)
@@ -48,7 +42,8 @@ def update_plot(_):
     fig = go.Figure()
 
     for _, row in df.iterrows():
-        x, y = calculate_coordinates(row['place_en_hemicycle'], max_seat)
+        x = row['X']
+        y = row['Y']
         fig.add_trace(go.Scatter(
             x=[x],
             y=[y],
