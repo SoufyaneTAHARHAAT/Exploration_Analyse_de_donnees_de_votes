@@ -77,6 +77,7 @@ def update_bar_chart(selected_titre):
     pour_votes = filtered_df['nombre_pours'].sum()
     contre_votes = filtered_df['nombre_contres'].sum()
     abstention_votes = filtered_df['nombre_abstentions'].sum()
+    sort = filtered_df['sort'].iloc[0]  # Ajout du sort
     
     # Calculer les pourcentages
     pour_percentage = (pour_votes / total_votes) * 100
@@ -102,11 +103,12 @@ def update_bar_chart(selected_titre):
             for d in data
         ],
         'layout': {
-            'title': f'Distribution generale des votes pour cette loi',
+            'title': f'Distribution generale des votes pour la loi choisie/ Decision finale ({sort})',  # Ajout du sort dans le titre
             'yaxis': {'title': 'Pourcentage de votes (%)'},  # Mettre à jour le titre de l'axe des y
             'barmode': 'group'
         }
     }
+
 
 # Exécuter l'application Dash
 if __name__ == '__main__':
