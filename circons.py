@@ -94,7 +94,7 @@ circons_str = """<!DOCTYPE html>
         <div class="box">
             <h2>Code circonscription: {{ depute.code_circo }}</h2>
             <ul>
-                <li>Circonscription: <span>{{ depute.circonscription }}</span></li>
+                <li>Département: <span>{{ depute.circonscription }}</span></li>
                 <li>Député: <span>{{ depute.nom_complet }}</span></li>
                 <li>Lieu de naissance: <span>{{ depute.lieu_naissance }}</span></li>
                 <li>Début mandat: <span>{{ depute.mandat_debut }}</span></li>                

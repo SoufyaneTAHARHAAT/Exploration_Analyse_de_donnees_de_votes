@@ -1,0 +1,18 @@
+* {
+    margin: 0; 
+    padding: 0;
+    box-sizing: border-box;
+}
+
+ /* titre de la page carte de france */
+h1.carte-page-title {
+    margin: 10px auto 0 auto;
+    border-radius: 30px;
+    width: fit-content;
+    padding: 20px 40px;
+    background-color: rgba(137, 196, 244, 1);
+    color: #ffffff;
+    text-align: center;
+    font-family: monospace, sans-serif;
+
+}
