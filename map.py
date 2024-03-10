@@ -72,7 +72,7 @@ def display_hover_data(hoverData, current_figure):
     
     hovered_department = hoverData['points'][0]['text'][-2:]
     updated_data = []
-    for dep in current_figure['data'][0]['text']:  # Assuming the hover data is associated with the first trace
+    for dep in current_figure['data'][0]['text']:  
         marker_color = 'rgba(137, 196, 244, 1)'  # couleur par défaut
         if dep[-2:] == hovered_department:
             marker_color = 'rgba(255, 0, 0, 1)'  # changer la couleur
