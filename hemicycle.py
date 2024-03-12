@@ -140,7 +140,7 @@ def update_hemicycle(selected_titre):
             mode='markers',
             marker=dict(
                 size=10,
-                color=('gray' if ligne == False else 'green' if ligne=='pour' else 'purple' if ligne=='abstention' else 'red'),
+                color=('gray' if ligne == False else 'blue' if ligne=='pour' else 'green' if ligne=='abstention' else '#f77915'),
                 opacity=0.5
             ),
             text=row['nom'],
