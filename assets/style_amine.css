@@ -1,0 +1,34 @@
+* {
+    margin: 0; 
+    padding: 0;
+    box-sizing: border-box;
+}
+
+ /* titre de la page carte de france */
+h1.carte-page-title {
+    margin: 10px auto 0 auto;
+    border-radius: 30px;
+    width: fit-content;
+    padding: 20px 40px;
+    background-color: rgba(137, 196, 244, 1);
+    color: #ffffff;
+    text-align: center;
+    font-family: monospace, sans-serif;
+}
+
+/* titre qui affiche le total des députés dans le graphe d'age */
+.total-deputes-title {
+    text-align: center;
+    width: fit-content;
+    margin: 20px auto 0 auto;
+    border-radius: 6px;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(137, 196, 244, 1);
+}
+
+/*  */
+.hover-template-age{
+    color: #ffffff;
+    background: rgba(255, 0, 0, 0.7);
+}
