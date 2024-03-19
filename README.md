@@ -9,3 +9,6 @@
 # affichage de la carte de france avec les différents départements, lors du clique sur un département, on
 # affiche  les cironscriptions associées à ce dernier avec leurs députés, si on pose la souris sur l'une
 # des points bleu, on affiche en POPUP le nom et le code du département
+
+# Modification faites par Soufyane le 19/03
+# J'ai ajouté un autre filtre au fichier dash_scrutin_st... pour qu'à chaque fois qu'on choisi une loi, on choisi uniquement parmi les deputes qui y ont participes
