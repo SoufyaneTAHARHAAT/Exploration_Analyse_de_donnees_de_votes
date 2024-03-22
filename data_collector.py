@@ -11,13 +11,14 @@ def fetch_deputies():
         print(f"Échec de récupération des données des députés. Code d'état : {response.status_code}")
         return None
 
-def extract_slugs(xml_content):
-    slugs = []
+def extract_deputies_info(xml_content):
+    deputies_info = []
     root = ET.fromstring(xml_content)
     for deputy in root.findall('.//depute'):
         slug = deputy.find('slug').text
-        slugs.append(slug)
-    return slugs
+        parti_ratt_financier = deputy.find('parti_ratt_financier').text
+        deputies_info.append({'slug': slug, 'parti_ratt_financier': parti_ratt_financier})
+    return deputies_info
 
 def fetch_deputy_votes(deputy_slug):
     url = f"https://2017-2022.nosdeputes.fr/{deputy_slug}/votes/xml"
@@ -54,43 +55,40 @@ def extract_vote_info(xml_content):
             votes.append(vote_info)
     return votes
 
+def save_votes_to_csv(all_votes, deputies_info):
+    if all_votes:
+        with open('deputy_votes_new_last2.csv', 'w', newline='') as csvfile:
+            fieldnames = ['deputy_name', 'parti_ratt_financier', 'numero', 'date', 'type', 'sort', 'titre', 'nombre_votants', 'nombre_pours', 'nombre_contres', 'nombre_abstentions', 'position']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            
+            writer.writeheader()
+            for deputy_slug, votes in all_votes.items():
+                deputy_info = next((d for d in deputies_info if d['slug'] == deputy_slug), None)
+                if deputy_info:
+                    for vote in votes:
+                        writer.writerow({'deputy_name': deputy_slug, 'parti_ratt_financier': deputy_info['parti_ratt_financier'], 'position': vote['position'], **vote})
+    else:
+        print("Aucune donnée de député disponible.")
 
-# Récupérer les députés et extraire les slugs
-sum_voted = 0
-sum_nonvoted = 0
-sum = 0
-deputies_xml = fetch_deputies()
-if deputies_xml:
-    deputy_slugs = extract_slugs(deputies_xml)
-    # Récupérer les votes de chaque député et extraire les informations
-    all_votes = {}
-    for deputy_slug in deputy_slugs:
-        sum +=1
-        votes_xml = fetch_deputy_votes(deputy_slug)
-        if votes_xml:
-            vote_info = extract_vote_info(votes_xml)
-            all_votes[deputy_slug] = vote_info
-            sum_voted +=1
-            print(f"Récupération des votes de {deputy_slug} numéro {sum_voted}")
-        else:
-            sum_nonvoted += 1
+def main():
+    # Récupérer les députés et extraire les slugs et les partis rattachés financièrement
+    deputies_xml = fetch_deputies()
+    if deputies_xml:
+        deputies_info = extract_deputies_info(deputies_xml)
 
-print(f"total : {sum}")
-print(f"total votés : {sum_voted}")
-print(f"total non votés : {sum_nonvoted}")
+        # Récupérer les votes de chaque député et extraire les informations
+        all_votes = {}
+        for deputy_info in deputies_info:
+            deputy_slug = deputy_info['slug']
+            votes_xml = fetch_deputy_votes(deputy_slug)
+            if votes_xml:
+                vote_info = extract_vote_info(votes_xml)
+                all_votes[deputy_slug] = vote_info
 
-# Sauvegarder les informations de vote extraites dans un fichier CSV
-if all_votes:
-    with open('deputy_votes_new_last.csv', 'w', newline='') as csvfile:
-        fieldnames = ['deputy_name', 'numero', 'date', 'type', 'sort', 'titre', 'nombre_votants', 'nombre_pours', 'nombre_contres', 'nombre_abstentions', 'position']  # Ajouter 'position' ici
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        
-        writer.writeheader()
-        for deputy_slug, votes in all_votes.items():
-            for vote in votes:
-                writer.writerow({'deputy_name': deputy_slug, 'position': vote['position'], **vote})
+        # Sauvegarder les informations de vote extraites dans un fichier CSV
+        save_votes_to_csv(all_votes, deputies_info)
+    else:
+        print("Aucune donnée de député disponible.")
 
-
-    print("Données enregistrées dans deputy_votes_new_last.csv")
-else:
-    print("Aucune donnée de député disponible.")
+if __name__ == "__main__":
+    main()

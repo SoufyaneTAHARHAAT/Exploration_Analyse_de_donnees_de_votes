@@ -3,7 +3,6 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 import pandas as pd
-import numpy as np
 import subprocess
 
 # Load CSV data with a different encoding
@@ -42,7 +41,8 @@ app.layout = html.Div([
     ]),
 
     html.Div([
-        html.Div(id='position-output', style={'fontSize': '18px'})  # Enlarge the title
+        html.Div(id='position-output', style={'fontSize': '18px'}),  # Enlarge the title
+        html.Div(id='parti-output', style={'fontSize': '18px'})  # Display the deputy's party
     ]),
 
     html.Div([
@@ -83,22 +83,24 @@ def enable_deputy_dropdown(selected_titre):
     else:
         return True  # Disable dropdown when no law is selected
 
-# Define callback to update the position output message
+# Define callback to update the position output message and deputy's party
 @app.callback(
-    Output('position-output', 'children'),
+    [Output('position-output', 'children'),
+     Output('parti-output', 'children')],
     [Input('law-select', 'value'),
      Input('deputy-select', 'value')]
 )
-def update_position_output(selected_titre, selected_deputy):
+def update_position_and_party_output(selected_titre, selected_deputy):
     if selected_titre and selected_deputy:
         filtered_df = df[(df['titre'] == selected_titre) & (df['deputy_name'] == selected_deputy)]
         if len(filtered_df) == 0:
-            return f"Les données pour {selected_deputy} sur cette loi ne sont pas disponibles"
+            return f"Les données pour {selected_deputy} sur cette loi ne sont pas disponibles", ""
         else:
             position = filtered_df['position'].iloc[0]
-            return f"La position de {selected_deputy} sur cette loi est {position}"
+            parti_ratt_financier = filtered_df['parti_ratt_financier'].iloc[0]
+            return f"La position de {selected_deputy} sur cette loi est {position}", f"Parti rattaché financierement : {parti_ratt_financier}"
     else:
-        return ""
+        return "", ""
 
 # Define callback to update the bar chart based on selected law
 @app.callback(
@@ -170,11 +172,12 @@ def update_hemicycle(selected_titre):
                 mode='markers',
                 marker=dict(
                     size=10,
-                    color=('gray' if ligne == False else 'blue' if ligne=='pour' else 'green' if ligne=='abstention' else '#f77915'),
-                    opacity=0.5
-                ),
-                text=row['nom'],
-                customdata=[row['id']]
+                    color=('gray' if ligne == False else 'blue' if ligne=='pour' else 'green'
+ if ligne=='abstention' else '#f77915'),
+                opacity=0.5
+            ),
+            text=row['nom'],
+            customdata=[row['id']]
             ))
 
         fig.update_layout(
@@ -190,6 +193,7 @@ def update_hemicycle(selected_titre):
         return fig
     else:
         return go.Figure()
+
 # Define callback to handle click data on the hemicycle plot
 @app.callback(
     Output('click-data-output', 'children'),
@@ -203,31 +207,6 @@ def display_click_data(clickData):
         return html.Div(f'ID du député : {clicked_id}')
     else:
         return html.Div('Cliquer sur un député')
-
-def define_color(parti):
-    match parti:
-        case 'RN':
-            return '#152c80'
-        case 'LR':
-            return 'blue'
-        case 'MODEM':
-            return '#ef5b0c'
-        case 'HOR':
-            return '#0adcf5'
-        case 'LIOT':
-            return '#f5dc0a'
-        case 'NI':
-            return '#c5c5c5'
-        case 'REN':
-            return '#701fff'
-        case 'SOC':
-            return '#f51fff'
-        case 'ECO':
-            return 'green'
-        case 'LFI':
-            return 'red'
-        case 'GDR':
-            return '#a51111'
 
 # Run the Dash app
 if __name__ == '__main__':
