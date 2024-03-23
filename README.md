@@ -12,3 +12,4 @@
 
 # Modification faites par Soufyane le 19/03
 # J'ai ajouté un autre filtre au fichier dash_scrutin_st... pour qu'à chaque fois qu'on choisi une loi, on choisi uniquement parmi les deputes qui y ont participes
+# 23/03 J'ai ajouté les partis rattachés à chaque député. J'ai creer une fonction qui genere la matrice de deputes_scrutins pour faire une analyse PCA.
