@@ -1,9 +1,11 @@
 import json, dash, subprocess
-from dash import dcc, html, Input, Output, State
+from dash import dcc, html, Input, Output, State, callback
 import plotly.graph_objects as go
 
+dash.register_page(__name__, path='/map')
+
 # charger le fichier geojson 
-with open('departments.geojson') as f:
+with open('./departments.geojson') as f:
     geojson_data = json.load(f)
 
 # extraire les données du depts du fichier geojson
@@ -17,10 +19,10 @@ for feature in geojson_data['features']:
         "longitude": feature['geometry']['coordinates'][0][0][0] 
     })
 
-app = dash.Dash(__name__)
+# app = dash.Dash(__name__)
 
 # on crée le layout de la carte
-app.layout = html.Div(
+layout = html.Div(
     children=[
     html.H1('Carte des départements', className='carte-page-title'),
     html.Div(
@@ -48,7 +50,7 @@ app.layout = html.Div(
 ])
 
 # # Callback pour gérer le clique sur un dept
-@app.callback(
+@callback(
     Output('dummy-output', 'children'),
     [Input('france-map', 'clickData')]
 )
@@ -61,7 +63,7 @@ def handle_click(deptData):
         subprocess.run(["python", "circons.py", str(extracted_code)])
 
 # Callback pour changer la couleur du dept on hover
-@app.callback(
+@callback(
     Output('france-map', 'figure'),
     [Input('france-map', 'hoverData')],
     [State('france-map', 'figure')]
@@ -85,7 +87,7 @@ def display_hover_data(hoverData, current_figure):
     return updated_figure
 
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+# if __name__ == '__main__':
+#     app.run_server(debug=True)
 
 
