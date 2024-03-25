@@ -45,10 +45,13 @@ app.layout = html.Div([
         html.Div(id='parti-output', style={'fontSize': '18px'})  # Display the deputy's party
     ]),
 
-    html.Div([
+    html.Div(
+        style={'display': 'flex', 'justify-content': 'center'},
+        children=[
         dcc.Graph(id='hemicycle-plot'),
-        html.Div(id='click-data-output')
     ]),
+
+    html.Div(style={'display': 'flex', 'justify-content': 'center'},id='click-data-output'),
 
     html.Div([
         dcc.Graph(id='bar-chart')
@@ -262,7 +265,7 @@ def display_click_data(clickData):
         subprocess.run(["python", "depute.py", str(clicked_id)])
         return html.Div(f'ID du député : {clicked_id}')
     else:
-        return html.Div('Cliquer sur un député')
+        return html.Div('Cliquer sur un député pour afficher ses informations')
 
 # Run the Dash app
 if __name__ == '__main__':
