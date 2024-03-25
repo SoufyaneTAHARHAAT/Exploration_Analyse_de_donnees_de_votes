@@ -20,8 +20,6 @@ def calculate_coordinates(seat, max_seat):
     return x, y
 
 
-# app = dash.Dash(__name__)
-
 layout = html.Div([
     html.H1("Hemicycle du Parlement Français"),
     dcc.Graph(id='hemicycle-plot'),
@@ -75,6 +73,3 @@ def update_plot(_):
     )
 
     return fig
-
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
