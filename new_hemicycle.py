@@ -26,7 +26,7 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='law-select',
             options=[{'label': titre, 'value': titre} for titre in titres],
-            value=titres[0]
+            value=''
         )
     ]),
 
@@ -46,13 +46,15 @@ app.layout = html.Div([
     ]),
 
     html.Div([
-        dcc.Graph(id='bar-chart')
+        dcc.Graph(id='hemicycle-plot'),
+        html.Div(id='click-data-output')
     ]),
 
     html.Div([
-        dcc.Graph(id='hemicycle-plot'),
-        html.Div(id='click-data-output')
+        dcc.Graph(id='bar-chart')
     ])
+
+
 ])
 
 # Define callback to update deputy dropdown options based on selected law
@@ -147,6 +149,31 @@ def update_bar_chart(selected_titre):
         }
     else:
         return {}  # Return an empty figure if no law is selected
+    
+def define_color(parti) :
+    match parti :
+        case 'RN' :
+            return '#152c80'
+        case 'LR' :
+            return 'blue'
+        case 'MODEM' :
+            return '#ef5b0c'
+        case 'HOR' :
+            return '#0adcf5'
+        case 'LIOT' :
+            return '#f5dc0a'
+        case 'NI' :
+            return '#c5c5c5'
+        case 'REN' :
+            return '#701fff'
+        case 'SOC' :
+            return '#f51fff'
+        case 'ECO' :
+            return 'green'
+        case 'LFI' :
+            return 'red'
+        case 'GDR' :
+            return '#a51111'
 
 # Define callback to update the hemicycle plot based on selected law
 @app.callback(
@@ -192,7 +219,36 @@ def update_hemicycle(selected_titre):
 
         return fig
     else:
-        return go.Figure()
+        fig = go.Figure()
+
+    for _, row in df_cood.iterrows():
+        x = row['X']
+        y = row['Y']
+        fig.add_trace(go.Scatter(
+            x=[x],
+            y=[y],
+            mode='markers',
+            marker=dict(
+                size=10,
+                color=define_color(row['groupe_sigle']),
+                opacity=0.5
+            ),
+            text=row['nom'],
+            customdata=[row['id']]
+        ))
+
+    fig.update_layout(
+        title='Hemicycle du Parlement Français',
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        showlegend=False,
+        height=600,
+        width=800,
+        plot_bgcolor='white'
+    )
+
+    return fig
+        
 
 # Define callback to handle click data on the hemicycle plot
 @app.callback(
