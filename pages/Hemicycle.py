@@ -201,8 +201,9 @@ def update_hemicycle(selected_titre):
  if ligne=='abstention' else '#f77915'),
                 opacity=0.5
             ),
-            text=row['nom'],
-            customdata=[row['id']]
+            text=f"{row['nom']} ({row['parti_ratt_financier']})",
+            customdata=[row['id']],
+            hoverinfo='text'
             ))
 
         fig.update_layout(
@@ -210,8 +211,8 @@ def update_hemicycle(selected_titre):
             xaxis=dict(visible=False),
             yaxis=dict(visible=False),
             showlegend=False,
-            height=600,
-            width=800,
+            height=800,
+            width=1200,
             plot_bgcolor='white'
         )
 
@@ -231,8 +232,9 @@ def update_hemicycle(selected_titre):
                 color=define_color(row['groupe_sigle']),
                 opacity=0.5
             ),
-            text=row['nom'],
-            customdata=[row['id']]
+            text=f"{row['nom']} ({row['parti_ratt_financier']})",
+            customdata=[row['id']],
+            hoverinfo='text'
         ))
 
     fig.update_layout(
@@ -240,8 +242,8 @@ def update_hemicycle(selected_titre):
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),
         showlegend=False,
-        height=600,
-        width=800,
+        height=800,
+        width=1200,
         plot_bgcolor='white'
     )
 
