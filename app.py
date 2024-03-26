@@ -6,12 +6,31 @@ app = dash.Dash(__name__, use_pages=True)
 app.layout = html.Div(
     [
         # main app framework
-        html.Div("Python Multipage App with Dash", style={'fontSize':50, 'textAlign':'center'}),
+        html.Div(
+            "Visualisation des données parlementaires", 
+            style={
+                'fontSize':45,
+                'textAlign':'center',
+                'marginLeft': 'auto', 'marginRight': 'auto', 'marginTop': 20, 'marginBottom': 40,
+                'color':'#005b96',
+                'font-family':'monospace, sans-serif', 
+            }),
         html.Div([
-            dcc.Link(page['name']+"  |  ", href=page['path'])
-            for page in dash.page_registry.values()
+            dcc.Link(
+                page['name'], 
+                href=page['path'], 
+                style={
+                    'text-decoration':'none',
+                    'margin-left':20,
+                    'margin-right':20,
+                    'font-size':24,
+                    'font-family':'monospace, sans-serif', 
+                    'color':'#005b96',
+                    'letter-spacing':2,    
+                    'padding-left':10, 'padding-right':10,
+                    'border-left':'5px solid #005b96'        
+                }) for page in dash.page_registry.values()
         ]),
-        html.Hr(),
 
         # content of each page
         dash.page_container
