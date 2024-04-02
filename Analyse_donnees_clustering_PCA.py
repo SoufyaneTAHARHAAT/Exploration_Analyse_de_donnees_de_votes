@@ -67,13 +67,34 @@ cluster_counts = pd.Series(labels).value_counts().sort_index()
 fig_bar = go.Figure(data=[go.Bar(x=cluster_counts.index, y=cluster_counts.values, marker_color='skyblue')])
 fig_bar.update_layout(title='Répartition des députés dans chaque cluster', xaxis_title='Cluster', yaxis_title='Nombre de députés')
 
+# Charger le fichier contenant les informations sur les députés (nom et parti politique)
+deputy_info = pd.read_csv('deputy_votes_new_last.csv', encoding='latin1')
+
+
+
+# Créer une liste pour stocker les noms et les partis politiques des députés par cluster
+deputies_with_party = [[] for _ in range(optimal_n_clusters)]
+for deputy_name, label in zip(deputy_names, labels):
+    party = deputy_info[deputy_info['deputy_name'] == deputy_name]['parti_ratt_financier'].iloc[0]
+    deputies_with_party[label].append((deputy_name, party))
+
 # Créer l'application Dash
 app = dash.Dash(__name__)
 
 # Layout de l'application Dash
 app.layout = html.Div([
     dcc.Graph(figure=fig_2d),
-    dcc.Graph(figure=fig_bar)
+    dcc.Graph(figure=fig_bar),
+    html.Div([
+        html.H2('Noms des députés et leur parti politique par cluster'),
+        *[html.Div([
+            html.H4(f'Cluster {i+1}'),
+            html.Ul([
+                html.Li(f'{deputy[0]} - {deputy[1]}') 
+                for deputy in deputies_with_party[i]
+            ])
+        ]) for i in range(optimal_n_clusters)]
+    ])
 ])
 
 # Exécuter l'application Dash
