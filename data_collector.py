@@ -38,7 +38,7 @@ def extract_vote_info(xml_content):
     for vote in root.findall('.//vote'):
         scrutin = vote.find('scrutin')
         numero = int(scrutin.find('numero').text)
-        if numero in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+        if numero in range(1, 101):
             position = vote.find('position').text
             vote_info = {
                 'numero': numero,
