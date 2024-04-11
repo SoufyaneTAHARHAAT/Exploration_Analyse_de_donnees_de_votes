@@ -36,7 +36,8 @@ for index, row in df_add.iterrows():
             df_add.at[index, column] = ('pour' if value > 0 else 'contre' if value < 0 else 'abstention')
 
 df_same_votes = pd.DataFrame()
-df_same_votes['deputy_name'] = df_votes['deputy_name'].unique()
+df_same_votes = df_votes.filter(items=['deputy_name', 'parti_ratt_financier']).drop_duplicates()
+df_same_votes.dropna(subset=['parti_ratt_financier'], inplace=True)
 df_same_votes['voted_as_party'] = 0
 df_same_votes['nb_votes'] = 0
 
@@ -54,3 +55,19 @@ for index, row in df_votes.iterrows():
 df_same_votes['percentage'] = df_same_votes['voted_as_party']/df_same_votes['nb_votes']*100
 
 df_same_votes.to_csv('party_loyalty.csv', index=False)
+
+df_average_party = pd.DataFrame()
+df_average_party['parti_ratt_financier'] = df_votes['parti_ratt_financier'].unique()
+df_average_party['sum'] = 0.0
+df_average_party['nb_dep'] = 0
+
+for index, row in df_same_votes.iterrows():
+    df_average_party.loc[df_average_party['parti_ratt_financier']==row['parti_ratt_financier'], ['sum']] += row['percentage']
+    df_average_party.loc[df_average_party['parti_ratt_financier']==row['parti_ratt_financier'], ['nb_dep']] += 1
+
+df_average_party['avg']= df_average_party['sum'] / df_average_party['nb_dep']
+
+df_average_party = df_average_party.filter(items=['parti_ratt_financier', 'avg'])
+
+df_average_party.to_csv('average_party_loyalty.csv', index=False)
+
