@@ -23,7 +23,7 @@ app.layout = html.Div(
                     'text-decoration':'none',
                     'margin-left':20,
                     'margin-right':20,
-                    'font-size':24,
+                    'font-size':20,
                     'font-family':'monospace, sans-serif', 
                     'color':'#005b96',
                     'letter-spacing':2,    

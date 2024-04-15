@@ -5,9 +5,11 @@ from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 import dash
-from dash import dcc, html, Input, Output
+from dash import dcc, html, Input, Output, callback
 import plotly.express as px
 import plotly.graph_objects as go
+
+dash.register_page(__name__, path="/clustering")
 
 # Charger la matrice à partir du fichier CSV
 df = pd.read_csv('matrice_votes_deputes.csv')
@@ -79,17 +81,17 @@ for deputy_name, label in zip(deputy_names, labels):
     deputies_by_party_and_cluster[label][party].append(deputy_name)
 
 # Créer l'application Dash
-app = dash.Dash(__name__)
+# app = dash.Dash(__name__)
 
 # Layout de l'application Dash
-app.layout = html.Div([
+layout = html.Div([
     dcc.Graph(id='2d-plot', figure=fig_2d),
     dcc.Graph(id='bar-plot', figure=fig_bar),
     html.Div(id='party-deputies'),
 ])
 
 # Callback pour afficher les députés du parti sélectionné et leur pourcentage lorsqu'une barre est cliquée
-@app.callback(
+@callback(
     Output('party-deputies', 'children'),
     [Input('bar-plot', 'clickData')]
 )
@@ -111,6 +113,6 @@ def display_party_deputies(click_data):
         ]))
     return party_deputies
 
-# Exécuter l'application Dash
-if __name__ == '__main__':
-    app.run_server(debug=True)
+# # Exécuter l'application Dash
+# if __name__ == '__main__':
+#     app.run_server(debug=True)

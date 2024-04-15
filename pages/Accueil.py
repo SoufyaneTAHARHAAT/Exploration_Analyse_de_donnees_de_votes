@@ -17,15 +17,20 @@ layout = html.Div(
             }),
 
         html.Div(
-        "A travers cette application, vous pourrez observer différentes représentations et analyses de données de votes de l'Assemblée Nationale française. \n" 
-        "L'objectif de celle-ci est de permettre une exploration plus intuitive et compréhensible des décisions et opinions exprimées lors des séances.",
+        "Cette application offre une variété de représentations et d'analyses des données de votes de l'Assemblée Nationale française, " + 
+        "\npermettant ainsi une exploration plus intuitive des décisions et opinions exprimées lors des séances. Son objectif principal est de" + 
+        "\nrendre les informations plus accessibles et compréhensibles, offrant aux utilisateurs une perspective claire sur les délibérations et" + 
+        "\nles tendances au sein de l'Assemblée Nationale.",
         style={
-            'fontSize': 20,
-            'textAlign': 'left',
+            "width": 1000,
+            'fontSize': 24,
+            'textAlign': 'justify',
             'font-family': 'monospace, sans-serif', 
             'color': 'black',
-            'marginLeft': 30, 
-            'marginRight': 30, 
+            'marginTop': 30,
+            'lineHeight': 2,
+            'marginLeft': "auto", 
+            'marginRight': "auto", 
             'marginTop': 20
         }
     )

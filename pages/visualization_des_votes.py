@@ -98,7 +98,7 @@ def update_position_and_party_output(selected_titre, selected_deputy):
         else:
             position = filtered_df['position'].iloc[0]
             parti_ratt_financier = filtered_df['parti_ratt_financier'].iloc[0]
-            return f"La position de {selected_deputy} sur cette loi est {position}", f"Parti rattaché financierement : {parti_ratt_financier}"
+            return f"La position de {selected_deputy} sur cette loi est {position}", f"Parti rattaché : {parti_ratt_financier}"
     else:
         return "", ""
 
