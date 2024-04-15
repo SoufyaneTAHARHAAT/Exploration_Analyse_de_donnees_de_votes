@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import subprocess
 
-dash.register_page(__name__, path='/hemicycle')
+dash.register_page(__name__, path='/Visualisation_des_votes')
 
 df = pd.read_csv('deputy_votes_new_last.csv', encoding='ISO-8859-1')
 
