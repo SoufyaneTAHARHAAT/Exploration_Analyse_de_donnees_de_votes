@@ -1,4 +1,9 @@
 # Exploration_Analyse_de_donnees_de_votes
+# ***** ********************** Lancement du projet ************************
+# Pour lancer l'application, il faut éxecuter le fichier de l'entrée app.py en lançant la commande "python app.py" dans le terminal du dossier du projet
+# Après, il faut aller à votre navigateur et lancer le lien suivant: "localhost:8050/"
+# NB: parfois, ça peut arriver que Dash change de numéro du port de l'application, il suffit de voir dans le terminal le numéro du port utilisé par Dash
+# ***************************************************
 
 # modifications faites par Amine ECHHIBOU sur le fichier hemicycle !
 # => j'ai ajouter une ligne dans le fichier hemicycle.py (ligne 37) pour pouvoir éxecuter le fichier depute.py qui affichera le député lors du clique 
