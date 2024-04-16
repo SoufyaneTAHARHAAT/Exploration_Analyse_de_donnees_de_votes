@@ -173,7 +173,6 @@ def define_color(parti) :
         case 'GDR' :
             return '#a51111'
 
-# Define callback to update the hemicycle plot based on selected law
 @callback(
     Output('hemicycle-plot', 'figure'),
     [Input('law-select', 'value')]

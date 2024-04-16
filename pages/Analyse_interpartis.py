@@ -3,13 +3,18 @@ import dash
 from dash import dcc, html, Input, Output, State, callback
 from dash.dependencies import Input, Output
 import plotly.express as px
+import plotly.graph_objects as go
 
 dash.register_page(__name__, path='/analyse')
 
 loy_parti = pd.read_csv('average_party_loyalty.csv')
 
+df_cood = pd.read_csv('nosdeputes_cood.csv', sep=',')
+
+loy_dep = pd.read_csv('party_loyalty.csv')
+
 def shorten_party_name(party_name):
-    max_length = 10  # Longueur maximale autorisée
+    max_length = 15  # Longueur maximale autorisée
     if len(party_name) > max_length:
         return party_name[:max_length-3] + '...'  # Tronquer et ajouter ...
     else:
@@ -27,7 +32,8 @@ layout = html.Div([
                 'color':'black',
                 'marginLeft': 'auto', 'marginRight': 'auto', 'marginTop': 40
             }),
-    dcc.Graph(id='party-loyalty-graph')
+    dcc.Graph(id='party-loyalty-graph'),
+    dcc.Graph(id='Deputy_loyalty')
 ])
 
 @callback(
@@ -56,3 +62,49 @@ def update_graph(input_id):
         return fig
     else:
         return {}
+    
+def percentage(dep):
+    per = loy_dep.loc[loy_dep['deputy_name']==dep, 'percentage']
+    if not per.empty:
+        return per.iloc[0]
+    else:
+        return 0
+        
+@callback(
+    Output('Deputy_loyalty', 'figure'),
+    [Input('Deputy_loyalty', 'id')]
+)
+def update_deputy_loyalty(id):
+    if id == 'Deputy_loyalty':
+        fig = go.Figure()
+        for _, row in df_cood.iterrows():
+            per = percentage(row['slug'])
+            colors=[per] + [1]
+            x = row['X']
+            y = row['Y']
+            fig.add_trace(go.Scatter(
+                x=[x],
+                y=[y],
+                mode='markers',
+                marker=dict(
+                    size=10,
+                    color=colors,
+                    colorscale = 'Viridis',
+                    opacity=0.5
+                ),
+                text=f"{row['nom']} ({row['parti_ratt_financier']}), loyauté : {per}",
+                customdata=[row['id']],
+                hoverinfo='text'
+            ))
+
+        fig.update_layout(
+            title='Hemicycle du Parlement Français',
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            showlegend=False,
+            height=800,
+            width=1200,
+            plot_bgcolor='white'
+        )
+
+        return fig
