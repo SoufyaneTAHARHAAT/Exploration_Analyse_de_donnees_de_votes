@@ -1,5 +1,5 @@
 # Exploration_Analyse_de_donnees_de_votes
-# ***** ********************** Lancement du projet ************************
+# ********** Lancement du projet **********
 # Pour lancer l'application, il faut éxecuter le fichier de l'entrée app.py en lançant la commande "python app.py" dans le terminal du dossier du projet
 # Après, il faut aller à votre navigateur et lancer le lien suivant: "localhost:8050/"
 # NB: parfois, ça peut arriver que Dash change de numéro du port de l'application, il suffit de voir dans le terminal le numéro du port utilisé par Dash
