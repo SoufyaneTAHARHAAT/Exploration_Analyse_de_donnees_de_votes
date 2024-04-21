@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 
 dash.register_page(__name__, path='/analyse')
 
+#Visulaisation de la loyauté des députés
+
 loy_parti = pd.read_csv('average_party_loyalty.csv')
 
 df_cood = pd.read_csv('nosdeputes_cood.csv', sep=',')
@@ -33,8 +35,23 @@ layout = html.Div([
                 'marginLeft': 'auto', 'marginRight': 'auto', 'marginTop': 40
             }),
     dcc.Graph(id='party-loyalty-graph'),
-    dcc.Graph(id='Deputy_loyalty')
+    html.Div(
+    'Loyauté des députés à leur parti',
+    style={
+                'fontSize':20,
+                'textAlign':'center',
+                'font-family':'monospace, sans-serif', 
+                'color':'black',
+                'marginLeft': 'auto', 'marginRight': 'auto', 'marginTop': 40
+    }),
+    html.Div(
+        style={'display': 'flex', 'justify-content': 'center'},
+        children=[
+        dcc.Graph(id='Deputy_loyalty'),
+    ]),
 ])
+
+# Diagramme pour la loyauté moyenne des partis 
 
 @callback(
     Output('party-loyalty-graph', 'figure'),
@@ -63,6 +80,8 @@ def update_graph(input_id):
     else:
         return {}
     
+# Recherche et retour du pourcentage de loyauté du député demandé
+
 def percentage(dep):
     per = loy_dep.loc[loy_dep['deputy_name']==dep, 'percentage']
     if not per.empty:
@@ -70,6 +89,8 @@ def percentage(dep):
     else:
         return 0
         
+# Loyauté des députés dans l'hémicycle
+    
 @callback(
     Output('Deputy_loyalty', 'figure'),
     [Input('Deputy_loyalty', 'id')]
@@ -79,7 +100,7 @@ def update_deputy_loyalty(id):
         fig = go.Figure()
         for _, row in df_cood.iterrows():
             per = percentage(row['slug'])
-            colors=[per] + [1]
+            colors=[(per/100)**5] + [1]
             x = row['X']
             y = row['Y']
             fig.add_trace(go.Scatter(
@@ -89,7 +110,7 @@ def update_deputy_loyalty(id):
                 marker=dict(
                     size=10,
                     color=colors,
-                    colorscale = 'Viridis',
+                    colorscale = 'inferno',
                     opacity=0.5
                 ),
                 text=f"{row['nom']} ({row['parti_ratt_financier']}), loyauté : {per}",

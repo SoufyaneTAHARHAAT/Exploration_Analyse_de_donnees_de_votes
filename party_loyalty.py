@@ -23,12 +23,16 @@ def define_vote(pos) :
         case _:
             return 0
 
+# DF avec partis et lois
+
 for index, row in df_votes.iterrows():
     index = df_add.index[df_add['titre'] == row['titre']].tolist()
 
     if index and len(index) == 1:
         index = index[0]
         df_add.at[index, row['parti_ratt_financier']] += define_vote(row['position'])
+
+# Somme des position pour position préférée du parti
 
 for index, row in df_add.iterrows():
     for column, value in row.items():
@@ -40,6 +44,8 @@ df_same_votes = df_votes.filter(items=['deputy_name', 'parti_ratt_financier']).d
 df_same_votes.dropna(subset=['parti_ratt_financier'], inplace=True)
 df_same_votes['voted_as_party'] = 0
 df_same_votes['nb_votes'] = 0
+
+# Calcul du nombre de votes de chaque député correspondant à ceclui de son parti
 
 for index, row in df_votes.iterrows():
     index = df_add.index[df_add['titre'] == row['titre']].tolist()
@@ -60,6 +66,8 @@ df_average_party = pd.DataFrame()
 df_average_party['parti_ratt_financier'] = df_votes['parti_ratt_financier'].unique()
 df_average_party['sum'] = 0.0
 df_average_party['nb_dep'] = 0
+
+# Loyauté moyenne des partis en %
 
 for index, row in df_same_votes.iterrows():
     df_average_party.loc[df_average_party['parti_ratt_financier']==row['parti_ratt_financier'], ['sum']] += row['percentage']

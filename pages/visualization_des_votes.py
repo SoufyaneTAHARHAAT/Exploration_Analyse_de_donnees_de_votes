@@ -7,6 +7,8 @@ import subprocess
 
 dash.register_page(__name__, path='/Visualisation_des_votes')
 
+# Visualisation des votes des députés
+
 df = pd.read_csv('deputy_votes_new_last.csv', encoding='ISO-8859-1')
 
 titres = df['titre'].unique()
@@ -29,15 +31,15 @@ layout = html.Div([
         html.Label('Sélectionnez un nom de député :', style={'fontSize': '18px'}),
         dcc.Dropdown(
             id='deputy-select',
-            style={'width': '50%'},  # Reduce the width for better fit
-            value='',  # Set a default value
+            style={'width': '50%'},  
+            value='',  
             disabled=True 
         )
     ]),
 
     html.Div([
-        html.Div(id='position-output', style={'fontSize': '18px'}),  # Enlarge the title
-        html.Div(id='parti-output', style={'fontSize': '18px'})  # Display the deputy's party
+        html.Div(id='position-output', style={'fontSize': '18px'}),  
+        html.Div(id='parti-output', style={'fontSize': '18px'})  
     ]),
 
     html.Div(
@@ -55,35 +57,35 @@ layout = html.Div([
 
 ])
 
-# Define callback to update deputy dropdown options based on selected law
+# Selection d'un titre de loi dans le menu déroulant
+
 @callback(
     Output('deputy-select', 'options'),
     [Input('law-select', 'value')]
 )
 def update_deputy_options(selected_titre):
     if selected_titre:
-        # Filter dataframe based on selected law and deputies with available data
         filtered_df = df[df['titre'] == selected_titre]
         available_deputies = filtered_df['deputy_name'].unique()
-        # Construct options for deputy dropdown
         deputy_options = [{'label': deputy, 'value': deputy} for deputy in available_deputies]
         return deputy_options
     else:
-        # If no law is selected, return empty options
         return []
 
-# Define callback to enable deputy dropdown when a law is selected
+# Si titre selectionné on autorise la sélection de député
+
 @callback(
     Output('deputy-select', 'disabled'),
     [Input('law-select', 'value')]
 )
 def enable_deputy_dropdown(selected_titre):
     if selected_titre:
-        return False  # Enable dropdown when a law is selected
+        return False  
     else:
-        return True  # Disable dropdown when no law is selected
+        return True  
 
-# Define callback to update the position output message and deputy's party
+#  Affichage du parti et de la position du député selectionné
+
 @callback(
     [Output('position-output', 'children'),
      Output('parti-output', 'children')],
@@ -102,7 +104,9 @@ def update_position_and_party_output(selected_titre, selected_deputy):
     else:
         return "", ""
 
-# Define callback to update the bar chart based on selected law
+
+# Diagramme de barres avec les pourcentages pour / contre / abstention
+
 @callback(
     Output('bar-chart', 'figure'),
     [Input('law-select', 'value')]
@@ -114,9 +118,9 @@ def update_bar_chart(selected_titre):
         pour_votes = filtered_df['nombre_pours'].sum()
         contre_votes = filtered_df['nombre_contres'].sum()
         abstention_votes = filtered_df['nombre_abstentions'].sum()
-        sort = filtered_df['sort'].iloc[0]  # Add sort
+        sort = filtered_df['sort'].iloc[0] 
         
-        # Calculate percentages
+       
         pour_percentage = (pour_votes / total_votes) * 100
         contre_percentage = (contre_votes / total_votes) * 100
         abstention_percentage = (abstention_votes / total_votes) * 100
@@ -134,20 +138,22 @@ def update_bar_chart(selected_titre):
                     'y': [d['value']],
                     'type': 'bar',
                     'name': d['category'],
-                    'text': [f'{d["value"]:.2f}%'],  # Format label to show percentages
+                    'text': [f'{d["value"]:.2f}%'], 
                     'textposition': 'auto'
                 } 
                 for d in data
             ],
             'layout': {
-                'title': f'Distribution generale des votes pour la loi choisie/ Decision finale ({sort})',  # Add sort to title
-                'yaxis': {'title': 'Pourcentage de votes (%)'},  # Update y-axis title
+                'title': f'Distribution generale des votes pour la loi choisie/ Decision finale ({sort})',
+                'yaxis': {'title': 'Pourcentage de votes (%)'},
                 'barmode': 'group'
             }
         }
     else:
-        return {}  # Return an empty figure if no law is selected
+        return {} 
     
+# Retourne la couleur associé au parti
+
 def define_color(parti) :
     match parti :
         case 'RN' :
@@ -172,6 +178,8 @@ def define_color(parti) :
             return 'red'
         case 'GDR' :
             return '#a51111'
+
+# Affiche l'hémicycle de parlementaires et leur parti si aucune loi est sélectionnée, sinon la position des députés sur la loi
 
 @callback(
     Output('hemicycle-plot', 'figure'),
@@ -248,8 +256,8 @@ def update_hemicycle(selected_titre):
 
     return fig
         
+# Renvoie d'ID du député dans l'hémicycle sur lequel on clique et affiche ses informations
 
-# Define callback to handle click data on the hemicycle plot
 @callback(
     Output('click-data-output', 'children'),
     [Input('hemicycle-plot', 'clickData')]
@@ -257,7 +265,6 @@ def update_hemicycle(selected_titre):
 def display_click_data(clickData):
     if clickData:
         clicked_id = clickData['points'][0]['customdata']
-        # Pass the deputy's id as a parameter by executing the script that displays the deputy's details
         subprocess.run(["python", "depute.py", str(clicked_id)])
         return html.Div(f'ID du député : {clicked_id}')
     else:
